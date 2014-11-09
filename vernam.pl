@@ -27,32 +27,51 @@ my $filename1;
 my $file1;
 my $filename2;
 my $file2;
+my $filename3;
+my $file3 = STDOUT;
 
 
 sub misusage {
-    say "usage: ${0} <file1> <file2>";
+    say STDERR "usage: ${0} [-o <file3>] <file1> <file2>";
     exit(1);
 }
 
 
-if ($argc == 2) {
-    $filename1 = shift;
-    open($file1, $filename1) or die("Could not open file `$filename1`");
-    $filename2 = shift;
-    open($file2, $filename2) or die("Could not open file `$filename2`");
+if ($argc == 2 || $argc == 4) {
+    for (my $arg = shift(); defined($arg); $arg = shift()) {
+        if ($arg eq "-o") {
+            $arg = shift();
+            if (defined($arg)) {
+                $filename3 = $arg;
+                open($file3, '>', $filename3) or die("Could not open file `$filename3`");
+            } else {
+                misusage();
+            }
+        } else {
+            if (!defined($filename1)) {
+                $filename1 = $arg;
+                open($file1, '<', $filename1) or die("Could not open file `$filename1`");
+            } elsif (!defined($filename2)) {
+                $filename2 = $arg;
+                open($file2, '<', $filename2) or die("Could not open file `$filename2`");
+            } else {
+                misusage();
+            }
+        }
+    }
 } else {
     misusage();
 }
 
 binmode($file1, ":raw");
 binmode($file2, ":raw");
-binmode(STDOUT, ":raw");
+binmode($file3, ":raw");
 
 for (;;) {
     my $c1 = getc($file1);
     my $c2 = getc($file2);
     if (defined($c1) and defined($c2)) {
-        print ($c1 ^ $c2);
+        print $file3 ($c1 ^ $c2);
     } else {
         last;
     }

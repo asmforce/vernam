@@ -7,11 +7,15 @@ I'd like to use a special cryptographic tools to generate a proper pseudo-random
 ## How to use
 Usage is quite simple:
 
-    vernam.pl <file1> <file2>
+    vernam.pl [-o <file3>] <file1> <file2>
 
-Example:
+By default the result data will be printed to a standard output (stdout) stream:
 
     vernam.pl docs/credit_cards_pin_codes.zip key.bin > docs/credit_cards_pin_codes_ciphered.zip
+
+But you can use option `-o` to specify an output file:
+
+    vernam.pl docs/credit_cards_pin_codes.zip key.bin -o docs/credit_cards_pin_codes_ciphered.zip
 
 ## License
 
